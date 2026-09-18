@@ -26,10 +26,10 @@ from src.scoring import compute_composite_scores
 st.set_page_config(
     page_title="Pakistan Climate Opportunity Mapper | Module 1",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="auto"
 )
 
-# ---------------- CSS: Pinned Sidebar & Executive Command Center ----------------
+# ---------------- CSS: Responsive Sidebar & Executive Command Center ----------------
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -38,13 +38,8 @@ st.markdown("""
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
-    /* Pinned Sidebar: Force expanded and hide collapse button */
+    /* Sidebar Theme & Typography (All screen sizes) */
     section[data-testid="stSidebar"] {
-        width: 320px !important;
-        min-width: 320px !important;
-        transform: none !important;
-        position: relative !important;
-        transition: none !important;
         background-color: #0F172A !important;
         border-right: 1px solid #1E293B !important;
     }
@@ -59,10 +54,62 @@ st.markdown("""
     section[data-testid="stSidebar"] div[data-baseweb="select"] * {
         color: #0F172A !important;
     }
-    button[data-testid="stSidebarCollapseButton"],
-    button[data-testid="baseButton-headerNoPadding"],
-    [data-testid="collapsedControl"] {
-        display: none !important;
+    section[data-testid="stSidebar"] button[data-testid="stSidebarCollapseButton"] svg {
+        fill: #F8FAFC !important;
+        stroke: #F8FAFC !important;
+    }
+
+    /* Desktop View (>= 992px): Pinned Permanent Sidebar */
+    @media (min-width: 992px) {
+        section[data-testid="stSidebar"] {
+            width: 320px !important;
+            min-width: 320px !important;
+            transform: none !important;
+            position: relative !important;
+            transition: none !important;
+        }
+        button[data-testid="stSidebarCollapseButton"],
+        button[data-testid="baseButton-headerNoPadding"],
+        [data-testid="collapsedControl"] {
+            display: none !important;
+        }
+    }
+
+    /* Mobile & Tablet View (< 992px): Touch Drawer with visible Toggle & Close controls */
+    @media (max-width: 991px) {
+        section[data-testid="stSidebar"] {
+            max-width: 85vw !important;
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5) !important;
+        }
+        button[data-testid="stSidebarCollapseButton"],
+        button[data-testid="baseButton-headerNoPadding"],
+        [data-testid="collapsedControl"],
+        [data-testid="stSidebarCollapsedControl"] {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            z-index: 1000001 !important;
+        }
+        .command-header {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 0.75rem !important;
+            padding: 1rem !important;
+        }
+        .header-main-title {
+            font-size: 1.25rem !important;
+        }
+        .header-badge-live {
+            align-self: flex-start !important;
+        }
+        .cockpit-header {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 0.5rem !important;
+        }
+        .metric-panel {
+            margin-bottom: 0.5rem !important;
+        }
     }
 
     /* Institutional Header Banner */
@@ -475,7 +522,7 @@ with col_map:
     low_regional_dist = kpi_df.sort_values(by="preliminary_vulnerability_score", ascending=True).iloc[0]
     
     st.markdown(f"""
-    <div style="display: flex; justify-content: space-between; background: #F8FAFC; border: 1px solid #E2E8F0; padding: 0.55rem 0.9rem; border-radius: 6px; font-size: 0.78rem; color: #475569; margin-top: -0.5rem;">
+    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; background: #F8FAFC; border: 1px solid #E2E8F0; padding: 0.55rem 0.9rem; border-radius: 6px; font-size: 0.78rem; color: #475569; margin-top: -0.5rem;">
         <div>Regional Peak: <strong>{top_regional_dist['district']}</strong> ({top_regional_dist['preliminary_vulnerability_score']:.1f}/100)</div>
         <div>Regional Median: <strong>{kpi_df['preliminary_vulnerability_score'].median():.1f}/100</strong></div>
         <div>Regional Baseline: <strong>{low_regional_dist['district']}</strong> ({low_regional_dist['preliminary_vulnerability_score']:.1f}/100)</div>
